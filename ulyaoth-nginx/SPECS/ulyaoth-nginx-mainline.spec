@@ -41,9 +41,9 @@ BuildRequires: which
 
 # end of distribution specific definitions
 
-%define main_version                 1.15.12
+%define main_version                 1.19.4
 %define main_release                 1%{?dist}.ngx
-%define njs_version                  0.3.1
+%define njs_version                  0.4.4
 %define module_xslt_version          %{main_version}
 %define module_xslt_release          1%{?dist}.ngx
 %define module_geoip_version         %{main_version}
@@ -125,8 +125,9 @@ Source8: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-ngi
 Source9: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/nginx.upgrade.sh
 Source10: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/nginx.suse.logrotate
 Source11: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/nginx-debug.service
-Source12: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/COPYRIGHT
-Source13: https://github.com/nginx/njs/archive/%{njs_version}.tar.gz
+Source12: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/nginx.copyright
+Source13: https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-nginx/SOURCES/nginx.check-reload.sh
+Source14: https://github.com/nginx/njs/archive/%{njs_version}.tar.gz
 
 License: 2-clause BSD-like license
 
@@ -205,7 +206,7 @@ Dynamic nJScript module for nginx.
 
 %prep
 %setup -q -n nginx-%{main_version}
-tar xvzf %SOURCE13
+tar xvzf %SOURCE14
 cp %{SOURCE2} .
 sed -e 's|%%DEFAULTSTART%%|2 3 4 5|g' -e 's|%%DEFAULTSTOP%%|0 1 6|g' \
     -e 's|%%PROVIDES%%|nginx|g' < %{SOURCE2} > nginx.init
@@ -264,7 +265,7 @@ cd $RPM_BUILD_ROOT%{_sysconfdir}/nginx && \
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/doc/%{name}-%{main_version}
 %{__install} -m 644 -p %{SOURCE12} \
-    $RPM_BUILD_ROOT%{_datadir}/doc/%{name}-%{main_version}/
+    $RPM_BUILD_ROOT%{_datadir}/doc/%{name}-%{main_version}/COPYRIGHT
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
 %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
@@ -292,6 +293,8 @@ cd $RPM_BUILD_ROOT%{_sysconfdir}/nginx && \
 %{__mkdir} -p $RPM_BUILD_ROOT%{_libexecdir}/initscripts/legacy-actions/nginx
 %{__install} -m755 %SOURCE9 \
     $RPM_BUILD_ROOT%{_libexecdir}/initscripts/legacy-actions/nginx/upgrade
+%{__install} -m755 %SOURCE13 \
+    $RPM_BUILD_ROOT%{_libexecdir}/initscripts/legacy-actions/nginx/check-reload
 %else
 # install SYSV init stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_initrddir}
@@ -441,7 +444,6 @@ Commercial subscriptions for nginx are available on:
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -479,7 +481,6 @@ https://nginx.org/en/docs/http/ngx_http_xslt_module.html
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -502,7 +503,6 @@ https://nginx.org/en/docs/http/ngx_http_geoip_module.html
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -524,7 +524,6 @@ https://nginx.org/en/docs/http/ngx_http_image_filter_module.html
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -546,7 +545,6 @@ https://nginx.org/en/docs/http/ngx_http_perl_module.html
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -569,7 +567,6 @@ https://nginx.org/en/docs/njs/
 
 For any additional information or help regarding this rpm:
 Website: https://ulyaoth.com
-Forum: https://community.ulyaoth.com
 
 ----------------------------------------------------------------------
 BANNER
@@ -598,6 +595,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Sun Nov 8 2020 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.com> 1.19.4-1
+- Updated nginx mainline to 1.19.4.
+
 * Sun May 12 2019 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.com> 1.15.12-1
 - Updated nginx mainline to 1.15.12.
 
